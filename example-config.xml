@@ -1,0 +1,44 @@
+<CMDBSync>
+    <SyncFrequencyMinutes>20</SyncFrequencyMinutes>
+    <CacheTimeoutMinutes>20</CacheTimeoutMinutes>
+    <OAuth type="Apigee">
+        <URL>https://apis.intel.com/v1/auth/token</URL>
+        <ClientID>371dfae5-cb47-4303-812e-8e65394f5078</ClientID>
+        <ClientSecret>SECRET HERE</ClientSecret>
+        <ClientScope>api://71c9ae16-9d10-45b7-9c1d-30925311dabf/.default</ClientScope>
+    </OAuth>
+    <Tables>
+        <Table type="Server" enabled="true">
+            <URL>https://apis.intel.com/itsm/api/now/table/cmdb_ci_server</URL>
+            <IdentifyingSysParm>name</IdentifyingSysParm>
+            <SysParms>*</SysParms>
+        </Table>
+        <Table type="Application" enabled="true">
+            <URL>https://apis.intel.com/itsm/api/now/table/cmdb_ci_service_discovered</URL>
+            <IdentifyingSysParm>business_unit</IdentifyingSysParm>
+            <SysParms>u_tier_criticality,install_status,u_application_support_org,u_application_service,u_application_service_offering,sys_updated_on,type,number,used_for,u_app_environment,owned_by,operational_status,business_unit,version,bucket,service_status,short_description,busines_criticality,u_application_url,sys_class_name,u_keyword,aliases,sys_id,comments,service_classification</SysParms>
+        </Table>
+        <Table type="Tier" enabled="true">
+            <URL>https://apis.intel.com/itsm/api/now/table/cmdb_ci_service_discovered</URL>
+            <IdentifyingSysParm>name</IdentifyingSysParm>
+            <ParentIdentifyingSysParm>parent</ParentIdentifyingSysParm>
+            <SysParms>parent,u_application_id,name,u_tier_criticality,install_status,u_application_support_org,u_application_service,u_application_service_offering,sys_updated_on,type,number,used_for,u_app_environment,owned_by,operational_status,business_unit,version,bucket,service_status,short_description,busines_criticality,u_application_url,sys_class_name,u_keyword,aliases,sys_id,comments,service_classification</SysParms>
+        </Table>
+        <Table type="Node" enabled="true">
+            <URL>https://apis.intel.com/itsm/api/now/table/cmdb_ci_service_discovered</URL>
+            <IdentifyingSysParm>name</IdentifyingSysParm>
+            <ParentIdentifyingSysParm>parent</ParentIdentifyingSysParm>
+            <SysParms>parent,u_application_id,name,u_tier_criticality,install_status,u_application_support_org,u_application_service,u_application_service_offering,sys_updated_on,type,number,used_for,u_app_environment,owned_by,operational_status,business_unit,version,bucket,service_status,short_description,busines_criticality,u_application_url,sys_class_name,u_keyword,aliases,sys_id,comments,service_classification</SysParms>
+        </Table>
+        <Table type="BusinessTransaction" enabled="false">
+            <URL>https://apis.intel.com/itsm/api/now/table/cmdb_ci_server</URL>
+            <IdentifyingSysParm>business_unit</IdentifyingSysParm>
+            <SysParms>*</SysParms>
+        </Table>
+    </Tables>
+    <Controller>
+        <URL>https://intelcorp-pov.saas.appdynamics.com/</URL>
+        <ClientID>apiClient@intelcorp-pov</ClientID> <!-- give this account owner and administrator roles -->
+        <ClientSecret>SECRET HERE</ClientSecret>
+    </Controller>
+</CMDBSync>

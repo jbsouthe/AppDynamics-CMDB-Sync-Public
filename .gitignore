@@ -1,0 +1,8 @@
+src/main/java/com/appdynamics/MetaData.java
+**/.DS_Store
+logs/**
+lib/**
+CMDBSyncTool-*.jar
+dependency-reduced-pom.xml
+*.iv
+*.key

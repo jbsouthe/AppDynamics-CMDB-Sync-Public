@@ -1,5 +1,7 @@
 # AppDynamics CMDB Sync Utility
 
+[![published](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg)](https://developer.cisco.com/codeexchange/github/repo/jbsouthe/AppDynamics-CMDB-Sync-Public)
+
 This utility program is meant to sync CMDB Tags from sources, initially ServiceNow CMDB into AppDynamics.
 The AppDynamics Controller version 23.12 will be the first to support tags for Applications, Tiers, Nodes, BTs, and Servers.
 This utility is one way to get tags into the controller, let us know in an Issue what other systems to support and we will work with you to add that.

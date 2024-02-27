@@ -275,6 +275,7 @@ public class Configuration {
             }
             case "servicenow": {
                 this.oAuthClient = new SNOWOAuthClient(url, id, secret, userName, password, this);
+                break;
             }
             default: throw new InvalidConfigurationException("Unknown and unimplemented OAuth Client, use Apigee until we support more");
         }

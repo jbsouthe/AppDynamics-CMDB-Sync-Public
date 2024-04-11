@@ -13,7 +13,7 @@ public class EntityConverter {
 
     public EntityConverter (String type, String name, String identity) {
         logger.trace("EntityConverter : %s[%s] = %s",name, type,identity);
-        this.entityType = EntityType.valueOf(type);
+        this.entityType = EntityType.valueOfIgnoreCase(type);
         this.name = name;
         this.identity = identity;
     }

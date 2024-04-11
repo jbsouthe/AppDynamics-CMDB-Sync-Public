@@ -107,7 +107,7 @@ public class CSVParser {
     public Collection<BatchTaggingRequest> getBatchRequests(Controller controller) throws ParserException {
         Map<EntityType,BatchTaggingRequest> requests = new HashMap<>();
         for( List<String> record : this.records ) {
-            EntityType type = EntityType.valueOf(getEntityType(record));
+            EntityType type = EntityType.valueOfIgnoreCase(getEntityType(record));
             BatchTaggingRequest request = requests.get(type);
             if( request == null ) {
                 request = new BatchTaggingRequest(type);

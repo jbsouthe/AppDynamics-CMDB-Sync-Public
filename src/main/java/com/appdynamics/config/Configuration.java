@@ -293,7 +293,7 @@ public class Configuration {
     }
 
     public void addCMDBTable( String typeString, boolean enabled, String url, String identifyingSysParm, String parentIdentifyingSysParm, String sysParms, int cacheTimeoutMinutesArg , boolean forceOverWrite) throws InvalidConfigurationException {
-        EntityType type = EntityType.valueOf(typeString);
+        EntityType type = EntityType.valueOfIgnoreCase(typeString);
         if ( !forceOverWrite && this.cmdbTableMap.containsKey(type)) throw new InvalidConfigurationException("CMDB Table Type "+ type +" is defined twice in the configuration file");
         int cacheTimeoutMinutes = getProperty(CACHE_TIMEOUT_MINUTES_PROPERTY, 20);
         if( cacheTimeoutMinutesArg > -1 )

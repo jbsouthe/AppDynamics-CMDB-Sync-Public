@@ -366,7 +366,7 @@ public class Controller {
     }
 
     public String getTags (String typeString, String possibleApp, String[] names) {
-        EntityType type = EntityType.valueOf(typeString);
+        EntityType type = EntityType.valueOfIgnoreCase(typeString);
         List<Long> idList = null;
         switch(type) {
             case Server -> idList = getServerIds(possibleApp, names);
@@ -415,7 +415,7 @@ public class Controller {
     }
 
     public String deleteTags( String typeString, String possibleApp, String...names ) {
-        EntityType type = EntityType.valueOf(typeString);
+        EntityType type = EntityType.valueOfIgnoreCase(typeString);
         List<Long> idList = null;
         switch(type) {
             case Server -> idList = getServerIds(possibleApp, names);

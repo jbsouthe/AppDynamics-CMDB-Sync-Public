@@ -9,6 +9,15 @@ public enum EntityType {
     BusinessTransaction,
     SyntheticPage;
 
+    public static EntityType valueOfIgnoreCase(String name) throws IllegalArgumentException {
+        for (EntityType type : EntityType.values()) {
+            if (type.name().equalsIgnoreCase(name)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("Type unknown: "+ name);
+    }
+
     public String convertToAPIEntityType() {
         switch(this) {
             case Server -> {

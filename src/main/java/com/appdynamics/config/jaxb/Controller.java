@@ -13,6 +13,9 @@ public class Controller {
     @XmlElement(name = "ClientSecret")
     private ClientSecret clientSecret;
 
+    @XmlElement(name = "ModelCacheAge")
+    private long modelCacheAge = 24*60*60*1000L; //default to 1 day
+
     public String getUrl () {
         return url;
     }
@@ -37,5 +40,12 @@ public class Controller {
         this.clientSecret = clientSecret;
     }
 
+    public long getModelCacheAge () {
+        return modelCacheAge;
+    }
+
+    public void setModelCacheAge( long modelCacheAge ) {
+        this.modelCacheAge = modelCacheAge;
+    }
 }
 

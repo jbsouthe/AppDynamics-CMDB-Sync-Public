@@ -65,9 +65,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Controller {
+public class ControllerService {
     protected static final Logger logger = LogManager.getFormatterLogger();
-    private static final long MAX_CACHE_LIFE_MS = 24*60*60*1000; // 1 day
+    private long modelCacheMaxLifeMS = 24*60*60*1000; // 1 day
 
     public String hostname;
     public URL url;
@@ -100,7 +100,7 @@ public class Controller {
 
     };
 
-    public Controller( String urlString, String clientId, String clientSecret, Configuration configuration ) throws InvalidConfigurationException {
+    public ControllerService (String urlString, String clientId, String clientSecret, long modelCacheAge, Configuration configuration ) throws InvalidConfigurationException {
         if( !urlString.endsWith("/") ) urlString+="/"; //this simplifies some stuff downstream
         try {
             this.url = new URL(urlString);
@@ -121,6 +121,7 @@ public class Controller {
         //builder.registerTypeAdapter(Tag.class, new Tag.TagDeserializer());
         //builder.registerTypeAdapter(Tag.class, new Tag.TagSerializer());
         this.gson = builder.create();
+        this.modelCacheMaxLifeMS = modelCacheAge;
         getModel(); //initialize model
     }
 
@@ -324,14 +325,14 @@ public class Controller {
         if( forceRebuildOfCache ) this.controllerModel = null;
 
         //check a cache file, if it exists and isn't too old, deserialize it and go with it
-        File cacheFile = new File("."+ this.hostname +".modelCache");
-        if( cacheFile.exists() && ( cacheFile.lastModified() + MAX_CACHE_LIFE_MS > System.currentTimeMillis() ) ) {
+        File cacheFile = new File("."+ this.hostname +"-model.cache");
+        if( cacheFile.exists() && ( cacheFile.lastModified() + this.modelCacheMaxLifeMS > System.currentTimeMillis() ) ) {
             try (FileInputStream fileIn = new FileInputStream(cacheFile); ObjectInputStream objectIn = new ObjectInputStream(fileIn)) {
                 this.controllerModel = (Model) objectIn.readObject();
                 for (Application application : this.controllerModel.getAPMApplications()) {
-                    logger.info("Creating Model for Application: %s",application.name);
                     application.setController(this, false);
                 }
+                logger.info("Loaded Cached Model from file '%s'",cacheFile.getName());
             } catch (IOException | ClassNotFoundException e) {
                 logger.warn("Unable to open cache of model for controller from file '%s', Error: %s",cacheFile.getAbsolutePath(), e.getMessage());
                 this.controllerModel = null;
@@ -340,7 +341,7 @@ public class Controller {
 
         //if the model doesn't exist, still, then initialize it from scratch
         if( this.controllerModel == null ) {
-            logger.info("Initializing Model for Controller: %s",url);
+            logger.info("Initializing Model for ControllerService: %s",url);
             try {
                 String json = getRequest("controller/restui/applicationManagerUiBean/getApplicationsAllTypes");
                 logger.trace("getApplicationsAllTypes returned: %s",json);

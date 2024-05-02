@@ -1,9 +1,9 @@
 package com.appdynamics;
 
 import com.appdynamics.cmdb.EntityType;
+import com.appdynamics.controller.ControllerService;
 import com.appdynamics.csv.CSVFile;
 import com.appdynamics.csv.CSVParser;
-import com.appdynamics.controller.Controller;
 import com.appdynamics.controller.apidata.cmdb.BatchResponse;
 import com.appdynamics.controller.apidata.cmdb.BatchTaggingRequest;
 import com.appdynamics.controller.apidata.model.*;
@@ -111,7 +111,7 @@ public class CMDBSyncMain {
                 .build()
                 .defaultHelp(true)
                 .version(String.format("ServiceNow CMDB Sync Tool version %s build date %s written by %s", MetaData.VERSION, MetaData.BUILDTIMESTAMP, MetaData.CONTACT_GECOS))
-                .description("Manage ServiceNow CMDB Sync Data into an AppDynamics Controller");
+                .description("Manage ServiceNow CMDB Sync Data into an AppDynamics ControllerService");
         parser.addArgument("-v", "--version").action(Arguments.version());
         parser.addArgument("-c", "--config")
                 .setDefault("default-config.xml")
@@ -341,7 +341,7 @@ public class CMDBSyncMain {
                 Gson gson = builder.create();
                 try {
                     CSVFile csvFile = new CSVFile(csvFileName);
-                    Controller controller = config.getController();
+                    ControllerService controller = config.getController();
                     Model model = controller.getModel();
                     for(Server server : controller.getServerList()) {
                         csvFile.add(controller.getEntityTags(server.getId(), EntityType.Server), EntityType.Server);

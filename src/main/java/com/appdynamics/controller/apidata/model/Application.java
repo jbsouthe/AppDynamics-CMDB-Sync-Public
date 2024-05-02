@@ -1,7 +1,7 @@
 package com.appdynamics.controller.apidata.model;
 
 import com.appdynamics.cmdb.EntityType;
-import com.appdynamics.controller.Controller;
+import com.appdynamics.controller.ControllerService;
 import com.appdynamics.controller.apidata.metric.MetricData;
 import com.appdynamics.exceptions.ControllerBadStatusException;
 import com.google.gson.Gson;
@@ -22,7 +22,7 @@ public class Application implements Comparable<Application>, ITaggable, Serializ
     public List<BusinessTransaction> businessTransactions = new ArrayList<>();
     public List<Backend> backends = new ArrayList<>();
     public List<ServiceEndpoint> serviceEndpoints = new ArrayList<>();
-    private transient Controller controller;
+    private transient ControllerService controller;
     private transient Map<String,MetricData> controllerMetricMap = new HashMap<>();
     private boolean finishedInitialization=false;
 
@@ -36,7 +36,7 @@ public class Application implements Comparable<Application>, ITaggable, Serializ
         return String.format("Application: %s(%d) Tiers: %d Nodes: %d Business Transactions: %d Backends: %d Service Endpoints: %d", name, id, tiers.size(), nodes.size(), businessTransactions.size(), backends.size(), serviceEndpoints.size());
     }
 
-    public void setController( Controller controller, boolean forceInitialization ) {
+    public void setController(ControllerService controller, boolean forceInitialization ) {
         this.controller=controller;
         if( forceInitialization ) {
             this.finishedInitialization=false;
@@ -205,7 +205,7 @@ public class Application implements Comparable<Application>, ITaggable, Serializ
         }
     }
 
-    private void findMetrics(Controller controller, TreeNode[] somethings, String path) {
+    private void findMetrics(ControllerService controller, TreeNode[] somethings, String path) {
         if( somethings == null || somethings.length == 0 ) return;
         if( !"".equals(path) ) path += "|";
 

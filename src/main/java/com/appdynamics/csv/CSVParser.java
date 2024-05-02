@@ -1,8 +1,8 @@
 package com.appdynamics.csv;
 
 import com.appdynamics.cmdb.EntityType;
+import com.appdynamics.controller.ControllerService;
 import com.appdynamics.exceptions.ControllerBadStatusException;
-import com.appdynamics.controller.Controller;
 import com.appdynamics.controller.apidata.cmdb.BatchTaggingRequest;
 import com.appdynamics.exceptions.ParserException;
 
@@ -104,7 +104,7 @@ public class CSVParser {
         return records;
     }
 
-    public Collection<BatchTaggingRequest> getBatchRequests(Controller controller) throws ParserException {
+    public Collection<BatchTaggingRequest> getBatchRequests(ControllerService controller) throws ParserException {
         Map<EntityType,BatchTaggingRequest> requests = new HashMap<>();
         for( List<String> record : this.records ) {
             EntityType type = EntityType.valueOfIgnoreCase(getEntityType(record));
@@ -127,7 +127,7 @@ public class CSVParser {
         return map;
     }
 
-    private Long getEntityId (Controller controller, EntityType type, List<String> record) throws ParserException {
+    private Long getEntityId (ControllerService controller, EntityType type, List<String> record) throws ParserException {
         String name = getEntityName(record);
         switch (type) {
             case Server -> {

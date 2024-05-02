@@ -87,7 +87,7 @@ public class Backend implements Comparable<Backend>, Serializable {
         return -1;
     }
 
-    public class Prop implements Comparable<Prop> { //name shortened so as not to collide with my java.util.Properties
+    public class Prop implements Comparable<Prop>, Serializable { //name shortened so as not to collide with my java.util.Properties
         public String name, value;
         public long id;
 

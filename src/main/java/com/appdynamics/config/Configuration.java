@@ -6,11 +6,12 @@ import com.appdynamics.cmdb.authentication.ApigeeOAuthClient;
 import com.appdynamics.cmdb.authentication.IOAuthClient;
 import com.appdynamics.cmdb.authentication.SNOWOAuthClient;
 import com.appdynamics.config.jaxb.CMDBSync;
+import com.appdynamics.config.jaxb.Controller;
 import com.appdynamics.config.jaxb.Entry;
 import com.appdynamics.config.jaxb.Identity;
 import com.appdynamics.config.jaxb.OAuth;
 import com.appdynamics.config.jaxb.Table;
-import com.appdynamics.controller.Controller;
+import com.appdynamics.controller.ControllerService;
 import com.appdynamics.controller.apidata.model.ITaggable;
 import com.appdynamics.cryptography.AES256Cryptography;
 import com.appdynamics.cryptography.ICryptography;
@@ -35,7 +36,7 @@ public class Configuration {
     public static final String MAX_BATCH_RETRY_ATTEMPTS_PROPERTY = "max-batch-retries";
 
     private Properties properties = new Properties();
-    private Controller controller;
+    private ControllerService controller;
     private CMDBClient cmdbClient;
     private IOAuthClient oAuthClient;
     private ICryptography cryptography = null;
@@ -59,7 +60,7 @@ public class Configuration {
         return Integer.parseInt( getProperty(key, defaultInteger.toString()));
     }
 
-    public Controller getController() { return controller; }
+    public ControllerService getController() { return controller; }
     public CMDBClient getCmdbClient() { return cmdbClient; }
     public IOAuthClient getOAuthClient() { return oAuthClient; }
 
@@ -122,8 +123,12 @@ public class Configuration {
 
         if( section == null || section.equals("controller") ) {
             //Target controller section, this is where we plan to create insertable data for
-            addController( configXML.getController().getUrl(), configXML.getController().getClientId(),
-                    configXML.getController().getClientSecret().getValue(), configXML.getController().getClientSecret().isEncrypted());
+            addController( configXML.getController().getUrl(),
+                    configXML.getController().getClientId(),
+                    configXML.getController().getClientSecret().getValue(),
+                    configXML.getController().getClientSecret().isEncrypted(),
+                    configXML.getController().getModelCacheAge()
+            );
         }
 
         logger.info("Validating Configured Settings");
@@ -307,7 +312,7 @@ public class Configuration {
         return this.cmdbTableMap.get(type);
     }
 
-    public void addController( String url, String clientId, String clientSecret, Boolean clientSecretEncryptedFlag ) throws InvalidConfigurationException {
+    public void addController( String url, String clientId, String clientSecret, Boolean clientSecretEncryptedFlag, long maxCacheAge ) throws InvalidConfigurationException {
         clientSecret = getEnvironmentVar(clientSecret);
         if (clientSecretEncryptedFlag != null && clientSecretEncryptedFlag) {
             try {
@@ -316,7 +321,7 @@ public class Configuration {
                 throw new InvalidConfigurationException(e.getMessage());
             }
         }
-        this.controller = new Controller( url, clientId, clientSecret,this);
+        this.controller = new ControllerService( url, clientId, clientSecret, maxCacheAge, this);
     }
 
     public String getEnvironmentVar (String secret) throws InvalidConfigurationException {

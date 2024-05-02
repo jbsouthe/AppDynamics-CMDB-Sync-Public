@@ -52,7 +52,7 @@ public class ControllerBatchTagTask implements Runnable{
                             }
                         }
                     }
-                    workingStatusThread = new WorkingStatusThread("Controller Batch Insert", Thread.currentThread().getName(), logger);
+                    workingStatusThread = new WorkingStatusThread("ControllerService Batch Insert", Thread.currentThread().getName(), logger);
                     workingStatusThread.start();
                     logger.info(String.format("Inserting Tags for %s %s(%d)",batchTaggingRequest.entityType, batchTaggingRequest.entities.get(0).entityName, batchTaggingRequest.entities.get(0).entityId));
                     configuration.getController().updateTags(batchTaggingRequest);
@@ -70,6 +70,6 @@ public class ControllerBatchTagTask implements Runnable{
                 if( workingStatusThread != null ) workingStatusThread.cancel();
             }
         }
-        logger.debug("Shutting down Controller Tag Batch Insert Task");
+        logger.debug("Shutting down ControllerService Tag Batch Insert Task");
     }
 }

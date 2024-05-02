@@ -1,7 +1,7 @@
 package com.appdynamics.controller.apidata.metric;
 
+import com.appdynamics.controller.ControllerService;
 import com.appdynamics.controller.apidata.model.Application;
-import com.appdynamics.controller.Controller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,7 +15,7 @@ public class MetricData {
     public long metricId;
     public String metricName, metricPath, frequency, hostname;
     public List<MetricValue> metricValues;
-    public transient Controller controller;
+    public transient ControllerService controller;
     public transient Application application;
 
     public class MetricValue {

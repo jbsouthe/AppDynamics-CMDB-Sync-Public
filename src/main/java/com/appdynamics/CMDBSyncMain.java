@@ -1,8 +1,13 @@
 package com.appdynamics;
 
-import com.appdynamics.config.CSVParser;
+import com.appdynamics.cmdb.EntityType;
+import com.appdynamics.csv.CSVFile;
+import com.appdynamics.csv.CSVParser;
+import com.appdynamics.controller.Controller;
 import com.appdynamics.controller.apidata.cmdb.BatchResponse;
 import com.appdynamics.controller.apidata.cmdb.BatchTaggingRequest;
+import com.appdynamics.controller.apidata.model.*;
+import com.appdynamics.controller.apidata.server.Server;
 import com.appdynamics.cryptography.AES256Cryptography;
 import com.appdynamics.exceptions.CMDBBadStatusException;
 import com.appdynamics.exceptions.ControllerBadStatusException;
@@ -121,7 +126,7 @@ public class CMDBSyncMain {
                 .help("Set logging level {TRACE|DEBUG|INFO|WARN|ERROR}");
         parser.addArgument("command")
                 .nargs("*")
-                .help("Commands are probably too flexible, some examples include: {\"genkey [key file name]\", \"encrypt [string]\", \"query [table] [string]\", \"<get | delete> <EntityType> [Application] [Name Name ...]\", \"insert <csv file>\", \"executeScheduler\" }")
+                .help("Commands are probably too flexible, some examples include: {\"genkey [key file name]\", \"encrypt [string]\", \"query [table] [string]\", \"<get | delete> <EntityType> [Application] [Name Name ...]\", \"insert <csv file>\", \"export <csv file>\", \"executeScheduler\" }")
                 .setDefault("executeScheduler");
 
         Namespace namespace = null;
@@ -312,6 +317,49 @@ public class CMDBSyncMain {
                 } catch (ParserException e) {
                     throw new RuntimeException(e);
                 } catch (ControllerBadStatusException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+            }
+            case "export": {
+                List<Object> parts = namespace.getList("command");
+                String csvFileName = parts.get(1).toString();
+                Configuration config = null;
+                try {
+                    config = new Configuration(configFileName, "controller", keyFileName);
+                } catch (IOException e) {
+                    logger.fatal("Can not read configuration file: %s Exception: %s", configFileName, e.getMessage());
+                    return;
+                } catch (SAXException e) {
+                    logger.fatal("XML Parser Error reading config file: %s Exception: %s", configFileName, e.getMessage());
+                    return;
+                } catch (Exception e) {
+                    logger.fatal("A configuration exception was thrown that we can't handle, so we are quiting, Exception: ",e);
+                    return;
+                }
+                GsonBuilder builder = new GsonBuilder().setPrettyPrinting();
+                Gson gson = builder.create();
+                try {
+                    CSVFile csvFile = new CSVFile(csvFileName);
+                    Controller controller = config.getController();
+                    Model model = controller.getModel();
+                    for(Server server : controller.getServerList()) {
+                        csvFile.add(controller.getEntityTags(server.getId(), EntityType.Server), EntityType.Server);
+                    }
+                    for(Application application : controller.applications) {
+                        csvFile.add(controller.getEntityTags(application.getId(), EntityType.Application), EntityType.Application);
+                        for(Tier tier: application.tiers) {
+                            csvFile.add(application.name, controller.getEntityTags(tier.getId(), EntityType.Tier), EntityType.Tier);
+                        }
+                        for(Node node: application.nodes) {
+                            csvFile.add(application.name, controller.getEntityTags(node.getId(), EntityType.Node), EntityType.Node);
+                        }
+                        for(BusinessTransaction businessTransaction: application.businessTransactions) {
+                            csvFile.add(application.name, controller.getEntityTags(businessTransaction.getId(), EntityType.BusinessTransaction), EntityType.BusinessTransaction);
+                        }
+                    }
+                    csvFile.close();
+                } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
                 break;

@@ -6,6 +6,7 @@ import com.appdynamics.controller.apidata.account.MyAccount;
 import com.appdynamics.controller.apidata.cmdb.BatchDeleteRequest;
 import com.appdynamics.controller.apidata.cmdb.BatchResponse;
 import com.appdynamics.controller.apidata.cmdb.BatchTaggingRequest;
+import com.appdynamics.controller.apidata.cmdb.Entity;
 import com.appdynamics.controller.apidata.model.Application;
 import com.appdynamics.controller.apidata.model.Model;
 import com.appdynamics.controller.apidata.model.Node;
@@ -365,6 +366,11 @@ public class Controller {
         return new ArrayList<>();
     }
 
+    public Entity getEntityTags (long entityId, EntityType entityType) throws ControllerBadStatusException {
+        String json = getRequest("controller/restui/tags?entityId=%d&entityType=%s", entityId, entityType.convertToAPIEntityType());
+        return gson.fromJson( json, Entity.class);
+    }
+
     public String getTags (String typeString, String possibleApp, String[] names) {
         EntityType type = EntityType.valueOfIgnoreCase(typeString);
         List<Long> idList = null;
@@ -378,7 +384,7 @@ public class Controller {
             default -> throw new IllegalArgumentException("EntityType has new entities but the BatchTaggingRequest Constructor was not updated");
         }
         if( idList == null || idList.isEmpty() ) {
-            return "No Items Found To Delete Tags For";
+            return "No Tags Found For "+ names.toString();
         }
         StringBuilder stringBuilder = new StringBuilder();
         for( Long id : idList ) {

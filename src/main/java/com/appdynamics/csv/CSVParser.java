@@ -1,4 +1,4 @@
-package com.appdynamics.config;
+package com.appdynamics.csv;
 
 import com.appdynamics.cmdb.EntityType;
 import com.appdynamics.exceptions.ControllerBadStatusException;

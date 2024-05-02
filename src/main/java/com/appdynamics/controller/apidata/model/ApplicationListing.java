@@ -1,10 +1,11 @@
 package com.appdynamics.controller.apidata.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ApplicationListing {
+public class ApplicationListing implements Serializable {
     public Application analyticsApplication, cloudMonitoringApplication, dbMonApplication, simApplication;
     public List<Application> apiMonitoringApplications, apmApplications, eumWebApplications, iotApplications, mobileAppContainers;
     public List<Application> _allApplications;

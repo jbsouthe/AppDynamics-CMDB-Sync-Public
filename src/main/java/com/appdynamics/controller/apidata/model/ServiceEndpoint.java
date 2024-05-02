@@ -1,5 +1,6 @@
 package com.appdynamics.controller.apidata.model;
 
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -33,7 +34,7 @@ POST /controller/restui/serviceEndpoint/list
   },... ] }
 
  */
-public class ServiceEndpoint {
+public class ServiceEndpoint implements Serializable {
     public String name, type;
     public Tier applicationComponent;
     public long id;

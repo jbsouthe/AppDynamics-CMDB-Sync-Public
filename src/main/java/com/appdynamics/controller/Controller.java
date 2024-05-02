@@ -55,8 +55,7 @@ import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -68,6 +67,7 @@ import java.util.Map;
 
 public class Controller {
     protected static final Logger logger = LogManager.getFormatterLogger();
+    private static final long MAX_CACHE_LIFE_MS = 24*60*60*1000; // 1 day
 
     public String hostname;
     public URL url;
@@ -108,6 +108,9 @@ public class Controller {
             throw new InvalidConfigurationException(String.format("Bad url in configuration for a controller: %s exception: %s", urlString, exception.toString()));
         }
         this.hostname = this.url.getHost();
+        if( !clientId.contains("@") ) {
+            clientId += "@" + this.hostname.split("\\.")[0];
+        }
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.applications = applications;
@@ -317,7 +320,26 @@ public class Controller {
     }
 
     public Model getModel( boolean forceRebuildOfCache ) {
-        if( this.controllerModel == null || forceRebuildOfCache ) {
+        //if being forced, just delete the model and continue
+        if( forceRebuildOfCache ) this.controllerModel = null;
+
+        //check a cache file, if it exists and isn't too old, deserialize it and go with it
+        File cacheFile = new File("."+ this.hostname +".modelCache");
+        if( cacheFile.exists() && ( cacheFile.lastModified() + MAX_CACHE_LIFE_MS > System.currentTimeMillis() ) ) {
+            try (FileInputStream fileIn = new FileInputStream(cacheFile); ObjectInputStream objectIn = new ObjectInputStream(fileIn)) {
+                this.controllerModel = (Model) objectIn.readObject();
+                for (Application application : this.controllerModel.getAPMApplications()) {
+                    logger.info("Creating Model for Application: %s",application.name);
+                    application.setController(this, false);
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                logger.warn("Unable to open cache of model for controller from file '%s', Error: %s",cacheFile.getAbsolutePath(), e.getMessage());
+                this.controllerModel = null;
+            }
+        }
+
+        //if the model doesn't exist, still, then initialize it from scratch
+        if( this.controllerModel == null ) {
             logger.info("Initializing Model for Controller: %s",url);
             try {
                 String json = getRequest("controller/restui/applicationManagerUiBean/getApplicationsAllTypes");
@@ -325,7 +347,13 @@ public class Controller {
                 this.controllerModel = new Model(gson.fromJson(json, ApplicationListing.class));
                 for (Application application : this.controllerModel.getAPMApplications()) {
                     logger.info("Creating Model for Application: %s",application.name);
-                    application.setController(this);
+                    application.setController(this, true);
+                }
+                try (FileOutputStream fileOut = new FileOutputStream(cacheFile);
+                     ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
+                    objectOut.writeObject(this.controllerModel);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
             } catch (ControllerBadStatusException controllerBadStatusException) {
                 logger.warn("Giving up on getting controller model, not even going to retry");

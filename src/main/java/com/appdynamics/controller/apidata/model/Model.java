@@ -3,11 +3,12 @@ package com.appdynamics.controller.apidata.model;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class Model {
+public class Model implements Serializable {
     protected static final Logger logger = LogManager.getFormatterLogger();
 
     private ApplicationListing applicationListing;

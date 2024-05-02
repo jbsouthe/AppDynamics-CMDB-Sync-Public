@@ -2,7 +2,9 @@ package com.appdynamics.controller.apidata.model;
 
 import com.appdynamics.cmdb.EntityType;
 
-public class Node implements Comparable<Node>, ITaggable{
+import java.io.Serializable;
+
+public class Node implements Comparable<Node>, ITaggable, Serializable {
     public String name, type, tierName, machineName, machineOSType, machineAgentVersion, appAgentVersion, agentType;
     public long id, tierId, machineId;
     public boolean machineAgentPresent, appAgentPresent;

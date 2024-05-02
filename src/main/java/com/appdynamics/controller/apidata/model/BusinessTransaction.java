@@ -2,6 +2,8 @@ package com.appdynamics.controller.apidata.model;
 
 import com.appdynamics.cmdb.EntityType;
 
+import java.io.Serializable;
+
 /*
 [
     {
@@ -15,7 +17,7 @@ import com.appdynamics.cmdb.EntityType;
     "entryPointTypeString": "POJO"
   },...]
  */
-public class BusinessTransaction implements Comparable<BusinessTransaction>, ITaggable {
+public class BusinessTransaction implements Comparable<BusinessTransaction>, ITaggable, Serializable {
     public String internalName, entryPointType, tierName, name, entryPointTypeString;
     public long tierId, id;
     public boolean background;

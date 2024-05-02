@@ -1,4 +1,7 @@
 package com.appdynamics.controller.apidata.model;
+
+import java.io.Serializable;
+
 /*
 [{
   "exitPointType": "CUSTOM",
@@ -20,7 +23,7 @@ package com.appdynamics.controller.apidata.model;
   ]
 }, ...]
  */
-public class Backend implements Comparable<Backend> {
+public class Backend implements Comparable<Backend>, Serializable {
     public String exitPointType, name;
     public long tierId, applicationComponentNodeId, id;
     public Prop[] properties;

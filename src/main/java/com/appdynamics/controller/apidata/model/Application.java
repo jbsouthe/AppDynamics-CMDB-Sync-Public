@@ -9,9 +9,10 @@ import com.google.gson.GsonBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class Application implements Comparable<Application>, ITaggable {
+public class Application implements Comparable<Application>, ITaggable, Serializable {
     private static final Logger logger = LogManager.getFormatterLogger();
     public String name, accountGuid;
     public long id;
@@ -35,10 +36,14 @@ public class Application implements Comparable<Application>, ITaggable {
         return String.format("Application: %s(%d) Tiers: %d Nodes: %d Business Transactions: %d Backends: %d Service Endpoints: %d", name, id, tiers.size(), nodes.size(), businessTransactions.size(), backends.size(), serviceEndpoints.size());
     }
 
-    public void setController( Controller controller ) {
+    public void setController( Controller controller, boolean forceInitialization ) {
         this.controller=controller;
-        this.finishedInitialization=false;
-        init();
+        if( forceInitialization ) {
+            this.finishedInitialization=false;
+            init();
+        } else {
+            this.finishedInitialization=true;
+        }
     }
 
     public Set<String> getMetricNames() {

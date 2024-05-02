@@ -263,12 +263,14 @@ Please let us know if any logical fallacies arise in these options, we will work
         <URL>https://controller.saas.appdynamics.com/</URL>
         <ClientID>apiClient@controller</ClientID> <!-- give this account owner and administrator roles -->
         <ClientSecret encrypted="false">xxx</ClientSecret> <!-- can be an env variable "$ENV_VARIABLE_NAME" -->
+        <ModelCacheAge>86400000</ModelCacheAge>
     </Controller>
 
 This utility only runs against one controller, it will need to be run separately for each with a unique configuration file to update another
 * URL - the controller access url
 * ClientID - the api key name with the account name appended after an '@'
 * ClientSecret - the api key secret used to generate a token (either encrypted or not, default not). This can be an environment variable, if it starts with a $ and has no special characters but _, it will be resolved
+* ModelCacheAge - the length of time to allow the controller model to be cached for subsequent executions of this utility, default is 1 day, in milliseconds = 86400000
 
 #### Conversion Mapping AppDynamics to CMDB Entities
 
